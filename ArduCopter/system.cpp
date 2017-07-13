@@ -184,6 +184,9 @@ void Copter::init_ardupilot()
      */
     hal.scheduler->register_timer_failsafe(failsafe_check_static, 1000);
 
+    // give AHRS the airspeed sensor
+    ahrs.set_airspeed(&airspeed);
+
     // Do GPS init
     gps.init(&DataFlash, serial_manager);
 
@@ -239,6 +242,14 @@ void Copter::init_ardupilot()
     // read Baro pressure at ground
     //-----------------------------
     init_barometer(true);
+
+    if (airspeed.enabled()) {
+        // initialize airspeed sensor
+        // --------------------------
+        zero_airspeed(true);
+    } else {
+        gcs_send_text_P(SEVERITY_LOW,PSTR("NO airspeed"));
+    }
 
     // initialise sonar
 #if CONFIG_SONAR == ENABLED

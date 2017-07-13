@@ -381,9 +381,15 @@ void NOINLINE Copter::send_radio_out(mavlink_channel_t chan)
 
 void NOINLINE Copter::send_vfr_hud(mavlink_channel_t chan)
 {
+    float aspeed;
+    if (airspeed.enabled()) {
+        aspeed = airspeed.get_airspeed();
+    } else if (!ahrs.airspeed_estimate(&aspeed)) {
+        aspeed = 0;
+    }
     mavlink_msg_vfr_hud_send(
         chan,
-        gps.ground_speed(),
+        aspeed,
         gps.ground_speed(),
         (ahrs.yaw_sensor / 100) % 360,
         (int16_t)(motors.get_throttle())/10,
@@ -1919,3 +1925,19 @@ void Copter::gcs_send_text_fmt(const prog_char_t *fmt, ...)
         }
     }
 }
+
+/*
+  send airspeed calibration data
+ */
+void Copter::gcs_send_airspeed_calibration(const Vector3f &vg)
+{
+    for (uint8_t i=0; i<num_gcs; i++) {
+        if (gcs[i].initialised) {
+            if (comm_get_txspace((mavlink_channel_t)i) - MAVLINK_NUM_NON_PAYLOAD_BYTES >=
+                MAVLINK_MSG_ID_AIRSPEED_AUTOCAL_LEN) {
+                airspeed.log_mavlink_send((mavlink_channel_t)i, vg);
+            }
+        }
+    }
+}
+

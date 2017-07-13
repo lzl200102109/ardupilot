@@ -130,6 +130,7 @@ private:
 
     // key aircraft parameters passed to multiple libraries
     AP_Vehicle::MultiCopter aparm;
+    AP_Vehicle::FixedWing aparm_fw;
 
 
     // cliSerial isn't strictly necessary - it is an alias for hal.console. It may
@@ -510,6 +511,17 @@ private:
     // setup the var_info table
     AP_Param param_loader;
 
+
+    // Airspeed Sensors
+    AP_Airspeed airspeed {aparm_fw};
+
+    // the highest airspeed we have reached since entering AUTO. Used
+    // to control ground takeoff
+    float highest_airspeed;
+
+    // a smoothed airspeed estimate, used for limiting roll angle
+    float smoothed_airspeed;
+
 #if FRAME_CONFIG == HELI_FRAME
     // Mode filter to reject RC Input glitches.  Filter size is 5, and it draws the 4th element, so it can reject 3 low glitches,
     // and 1 high glitch.  This is because any "off" glitches can be highly problematic for a helicopter running an ESC
@@ -603,6 +615,7 @@ private:
     void gcs_data_stream_send(void);
     void gcs_check_input(void);
     void gcs_send_text_P(gcs_severity severity, const prog_char_t *str);
+    void gcs_send_airspeed_calibration(const Vector3f &vg);
     void do_erase_logs(void);
     void Log_Write_AutoTune(uint8_t axis, uint8_t tune_step, float meas_target, float meas_min, float meas_max, float new_gain_rp, float new_gain_rd, float new_gain_sp, float new_ddt);
     void Log_Write_AutoTuneDetails(float angle_cd, float rate_cds);
@@ -623,6 +636,7 @@ private:
     void Log_Write_Data(uint8_t id, float value);
     void Log_Write_Error(uint8_t sub_system, uint8_t error_code);
     void Log_Write_Baro(void);
+    void Log_Write_Airspeed(void);
     void Log_Write_Parameter_Tuning(uint8_t param, float tuning_val, int16_t control_in, int16_t tune_low, int16_t tune_high);
     void Log_Write_Home_And_Origin();
     void Log_Sensor_Health();
@@ -872,6 +886,8 @@ private:
     void init_compass();
     void init_optflow();
     void update_optical_flow(void);
+    void read_airspeed(void);
+    void zero_airspeed(bool);
     void read_battery(void);
     void read_receiver_rssi(void);
     void epm_update();
@@ -983,6 +999,7 @@ public:
 
     int8_t test_mode(uint8_t argc, const Menu::arg *argv);
     int8_t test_baro(uint8_t argc, const Menu::arg *argv);
+    int8_t test_airspeed(uint8_t argc, const Menu::arg *argv);
     int8_t test_compass(uint8_t argc, const Menu::arg *argv);
     int8_t test_ins(uint8_t argc, const Menu::arg *argv);
     int8_t test_optflow(uint8_t argc, const Menu::arg *argv);

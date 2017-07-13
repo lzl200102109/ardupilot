@@ -263,6 +263,7 @@ struct PACKED log_Nav_Tuning {
     float    vel_y;
     float    desired_accel_x;
     float    desired_accel_y;
+    int16_t  airspeed_cm;
 };
 
 // Write an Nav Tuning packet
@@ -286,7 +287,9 @@ void Copter::Log_Write_Nav_Tuning()
         vel_x           : velocity.x,
         vel_y           : velocity.y,
         desired_accel_x : accel_target.x,
-        desired_accel_y : accel_target.y
+        desired_accel_y : accel_target.y,
+        airspeed_cm     : (int16_t)airspeed.get_airspeed_cm()
+
     };
     DataFlash.WriteBlock(&pkt, sizeof(pkt));
 }
@@ -602,6 +605,12 @@ void Copter::Log_Write_Error(uint8_t sub_system, uint8_t error_code)
 void Copter::Log_Write_Baro(void)
 {
     DataFlash.Log_Write_Baro(barometer);
+}
+
+// Write a AIRSPEED packet
+void Copter::Log_Write_Airspeed(void)
+{
+    DataFlash.Log_Write_Airspeed(airspeed);
 }
 
 struct PACKED log_ParameterTuning {

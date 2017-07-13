@@ -14,6 +14,7 @@ static const struct Menu::command test_menu_commands[] PROGMEM = {
 #endif
     {"compass",             MENU_FUNC(test_compass)},
     {"ins",                 MENU_FUNC(test_ins)},
+    {"airspeed",            MENU_FUNC(test_airspeed)},
     {"optflow",             MENU_FUNC(test_optflow)},
     {"relay",               MENU_FUNC(test_relay)},
 #if CONFIG_HAL_BOARD == HAL_BOARD_PX4 || CONFIG_HAL_BOARD == HAL_BOARD_VRBRAIN
@@ -58,6 +59,31 @@ int8_t Copter::test_baro(uint8_t argc, const Menu::arg *argv)
     return 0;
 }
 #endif
+
+
+int8_t Copter::test_airspeed(uint8_t argc, const Menu::arg *argv)
+{
+    if (!airspeed.enabled()) {
+        cliSerial->printf_P(PSTR("airspeed: "));
+        print_enabled(false);
+        return (0);
+    }else{
+        print_hit_enter();
+        zero_airspeed(false);
+        cliSerial->printf_P(PSTR("airspeed: "));
+        print_enabled(true);
+
+        while(1) {
+            hal.scheduler->delay(20);
+            read_airspeed();
+            cliSerial->printf_P(PSTR("%.1f m/s\n"), (double)airspeed.get_airspeed());
+
+            if(cliSerial->available() > 0) {
+                return (0);
+            }
+        }
+    }
+}
 
 int8_t Copter::test_compass(uint8_t argc, const Menu::arg *argv)
 {
