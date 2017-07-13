@@ -184,6 +184,9 @@ void Copter::init_ardupilot()
      */
     hal.scheduler->register_timer_failsafe(failsafe_check_static, 1000);
 
+    // initialise airspeed sensor
+    airspeed.init();
+
     // give AHRS the airspeed sensor
     ahrs.set_airspeed(&airspeed);
 

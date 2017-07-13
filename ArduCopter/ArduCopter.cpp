@@ -100,9 +100,9 @@ const AP_Scheduler::Task Copter::scheduler_tasks[] PROGMEM = {
 #if OPTFLOW == ENABLED
     { SCHED_TASK(update_optical_flow),   2,    160 },
 #endif
-#if AIRSPEED == ENABLED
-    { SCHED_TASK(read_airspeed),          5,   1200 },
-#endif
+//#if AIRSPEED == ENABLED
+    { SCHED_TASK(read_airspeed),          5,  1200 },
+//#endif
     { SCHED_TASK(update_batt_compass),  40,    120 },
     { SCHED_TASK(read_aux_switches),    40,     50 },
     { SCHED_TASK(arm_motors_check),     40,     50 },

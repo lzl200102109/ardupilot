@@ -229,7 +229,6 @@ public:
         k_param_axis_enabled = 157, // deprecated - remove with next eeprom number change
         k_param_copter_leds_mode,   // deprecated - remove with next eeprom number change
         k_param_ahrs,               // AHRS group // 159
-        k_param_airspeed,           // AP_Airspeed parameters
 
         //
         // 160: Navigation parameters
@@ -346,11 +345,15 @@ public:
         k_param_rpm_sensor,
         k_param_autotune_min_d, // 251
 
+        k_param_airspeed,           // AP_Airspeed parameters
+
         // 254,255: reserved
     };
 
     AP_Int16        format_version;
     AP_Int8         software_type;
+
+
 
     // Telemetry control
     //
