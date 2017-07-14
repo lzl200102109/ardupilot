@@ -515,10 +515,6 @@ private:
     // Airspeed Sensors
     AP_Airspeed airspeed {aparm_fw};
 
-    // the highest airspeed we have reached since entering AUTO. Used
-    // to control ground takeoff
-    float highest_airspeed;
-
     // a smoothed airspeed estimate, used for limiting roll angle
     float smoothed_airspeed;
 
